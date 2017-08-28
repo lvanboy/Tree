@@ -25,15 +25,21 @@ BSTree GetMinimum_BSNode(BSNode *root);
 
 //插入节点
 int Insert_BSNode(BSNode *root, BSNode *node); 
+
 //插入节点包裹层
-
 BSTree WrapInsert_BSNode(BSNode *root, DataType nodeVal);
-//寻找节点的前驱
 
+//寻找节点的前驱
 BSTree predecessor(BSNode *node);
 
 //寻找节点的后继
 BSTree successor(BSNode *node);
+
+//删除节点
+BSTree Delete_BSTree(BSTree root, BSNode *node);
+
+//删除包裹层
+BSTree WrapDelete_BSTree(BSTree root, BSNode *node);
 
 //打印节点之间的关系
 void printRelation(BSNode *child, BSNode *parent, int direction);
@@ -43,6 +49,7 @@ void Destroy_BSTree(BSTree root);
 
 //先序遍历
 void preorder(BSTree root);
+
 //中序遍历
 void Inorder(BSTree root);
 #endif
