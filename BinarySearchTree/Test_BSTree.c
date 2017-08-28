@@ -3,30 +3,6 @@
 #include "BSTree.h"
 
 
-int main01(){
-	BSNode  t2, t3;
-	BSTree search_result = NULL;
-	BSTree t1 = NULL;
-	t2.val = 1;
-	t3.val = 3;
-	t2.left = NULL;
-	t2.parent = t1;
-	t2.right = NULL;
-	t3.left = NULL;
-	t3.parent = t1;
-	t3.right = NULL;
-	t1 = Create_BSNode( 2);
-	search_result = Search_BSTree(t1, 4);
-	if (search_result){
-		printf("finding!");
-	}
-	else{
-		printf("not finding.");
-	}
-	getchar();
-	return 0;
-}
-
 int main(){
 	BSTree root = Create_BSNode(6);
 	BSTree t1, t2, t3, t4, t5, t7;
