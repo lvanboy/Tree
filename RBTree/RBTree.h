@@ -1,11 +1,11 @@
 /*
-çº¢é»‘æ ‘æ˜¯ç‰¹æ®Šçš„äºŒå‰æœç´¢æ ‘
-æ»¡è¶³ä»¥ä¸‹æ¡ä»¶,åˆ™æŠŠäºŒå‰æœç´¢æ ‘ç§°ä¹‹ä¸ºçº¢é»‘æ ‘
-ï¼ˆ1ï¼‰æ¯ä¸ªèŠ‚ç‚¹æˆ–è€…æ˜¯é»‘è‰²ï¼Œæˆ–è€…æ˜¯çº¢è‰²ã€‚
-ï¼ˆ2ï¼‰æ ¹èŠ‚ç‚¹æ˜¯é»‘è‰²ã€‚
-ï¼ˆ3ï¼‰æ¯ä¸ªå¶å­èŠ‚ç‚¹ï¼ˆNILï¼‰æ˜¯é»‘è‰²ã€‚ [æ³¨æ„ï¼šè¿™é‡Œå¶å­èŠ‚ç‚¹ï¼Œæ˜¯æŒ‡ä¸ºç©º(NILæˆ–NULL)çš„å¶å­èŠ‚ç‚¹ï¼]
-ï¼ˆ4ï¼‰å¦‚æœä¸€ä¸ªèŠ‚ç‚¹æ˜¯çº¢è‰²çš„ï¼Œåˆ™å®ƒçš„å­èŠ‚ç‚¹å¿…é¡»æ˜¯é»‘è‰²çš„ã€‚
-ï¼ˆ5ï¼‰ä»ä¸€ä¸ªèŠ‚ç‚¹åˆ°è¯¥èŠ‚ç‚¹çš„å­å­™èŠ‚ç‚¹çš„æ‰€æœ‰è·¯å¾„ä¸ŠåŒ…å«ç›¸åŒæ•°ç›®çš„é»‘èŠ‚ç‚¹ã€‚
+ºìºÚÊ÷ÊÇÌØÊâµÄ¶ş²æËÑË÷Ê÷
+Âú×ãÒÔÏÂÌõ¼ş,Ôò°Ñ¶ş²æËÑË÷Ê÷³ÆÖ®ÎªºìºÚÊ÷
+£¨1£©Ã¿¸ö½Úµã»òÕßÊÇºÚÉ«£¬»òÕßÊÇºìÉ«¡£
+£¨2£©¸ù½ÚµãÊÇºÚÉ«¡£
+£¨3£©Ã¿¸öÒ¶×Ó½Úµã£¨NIL£©ÊÇºÚÉ«¡£ [×¢Òâ£ºÕâÀïÒ¶×Ó½Úµã£¬ÊÇÖ¸Îª¿Õ(NIL»òNULL)µÄÒ¶×Ó½Úµã£¡]
+£¨4£©Èç¹ûÒ»¸ö½ÚµãÊÇºìÉ«µÄ£¬ÔòËüµÄ×Ó½Úµã±ØĞëÊÇºÚÉ«µÄ¡£
+£¨5£©´ÓÒ»¸ö½Úµãµ½¸Ã½ÚµãµÄ×ÓËï½ÚµãµÄËùÓĞÂ·¾¶ÉÏ°üº¬ÏàÍ¬ÊıÄ¿µÄºÚ½Úµã¡£
 
 */
 
@@ -27,43 +27,54 @@ typedef struct TRBRoot{
 	Node *node;
 }RBRoot;
 
-//åˆ›å»ºæ ¹èŠ‚ç‚¹
+//´´½¨¸ù½Úµã
 RBRoot *RBTree_Create();
 
-//åˆ›å»ºèŠ‚ç‚¹
+//´´½¨½Úµã
 Node *RBTree_CreateNode(int key);
 
-//æŸ¥æ‰¾æ˜¯å¦å­˜åœ¨æŸä¸ªèŠ‚ç‚¹
+//ÖĞĞò±éÀú
+static void inorder(RBTree tree);
+
+void inorder_rbtree(RBRoot *root);
+
+//²éÕÒÊÇ·ñ´æÔÚÄ³¸ö½Úµã
 Node *IsExisting(RBRoot *root, Type key);
 
-//å·¦æ—‹
+//×óĞı
 void RBTree_Left_Rotate(RBRoot *root, Node *x);
 
-//å³æ—‹
+//ÓÒĞı
 void RBTree_Right_Rotate(RBRoot *root, Node *y);
 
-//æ’å…¥
-void RBTree_Insert(RBRoot *root, Node	*node);
-
-//æ’å…¥åŒ…è£¹
+//²åÈë°ü¹ü
 int RBTree_Insert_Wrap(RBRoot *root, Type key);
 
-//ä¿®å¤æ’å…¥
+//²åÈë
+void RBTree_Insert(RBRoot *root, Node	*node);
+
+//ĞŞ¸´²åÈë
 void RBTree_Insert_Fixup(RBRoot *root, Node	*node);
 
-//ä¿®å¤æ’å…¥è¾…åŠ©
-RBTree_Insert_Fixup_Helper(Node *uncle, Node *parent, Node *graparent, Node *node, RBRoot *root);
+//ĞŞ¸´²åÈë¸¨Öú
+ void RBTree_Insert_Fixup_Helper(Node *uncle, Node *parent, Node *graparent, Node *node, RBRoot *root,int f);
 
-//åˆ é™¤
+ //É¾³ı°ü¹ü
+ void RBTree_Delete_Wrap(RBRoot *root, Type key);
+
+//É¾³ı
 void RBTree_Delete(RBRoot *root, Node *node);
 
-//åˆ é™¤åŒ…è£¹
-void RBTree_Delete_Wrap(RBRoot *root, Type key);
-
-//ä¿®å¤åˆ é™¤
+//ĞŞ¸´É¾³ı
 void RBTree_Delete_Fixup(RBRoot *root, Node	*node, Node * parent);
 
-//ä¿®å¤åˆ é™¤è¾…åŠ©
-void RBTree_Delete_Fixup_Helper(RBRoot *root, Node	*node, Node * parent,int f);
+//ĞŞ¸´É¾³ı¸¨Öú
+int RBTree_Delete_Fixup_Helper(RBRoot *root, Node	*node, Node * parent,int f);
+
+//´òÓ¡¹ØÏµ
+void RBTree_Print_Relationship(Node * root);
+
+//Ïú»ÙÊ÷
+void RBTree_Destroy(RBRoot *root);
 
 #endif

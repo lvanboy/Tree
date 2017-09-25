@@ -3,8 +3,13 @@
 #include <stdlib.h>
 #include "RBTree.h"
 
+
+//×óÐý×ª
 void RBTree_Left_Rotate(RBRoot *root, Node *x){
 	Node *y = x->right;
+	if (!y){
+		return;
+	}
 	x->right = y->left;
 	if (y->left){
 		y->left->parent = x;
@@ -29,9 +34,15 @@ void RBTree_Left_Rotate(RBRoot *root, Node *x){
 
 }
 
+//ÓÒÐý×ª
 void RBTree_Right_Rotate(RBRoot *root, Node *y){
 	Node *x = y->left;
+	if (!x){
+		return;
+	}
+
 	y->left = x->right;
+
 	if (x->right){
 		x->right->parent = y;
 	}
@@ -51,12 +62,13 @@ void RBTree_Right_Rotate(RBRoot *root, Node *y){
 	y->parent = x;
 }
 
+//²åÈë½Úµã
 void RBTree_Insert(RBRoot *root, Node	*node){
-	//æ’å…¥ç‚¹
+	//²åÈëµã
 	Node *y = NULL;
 	Node *x = root->node;
 	while (x){
-		//åˆå§‹åŒ–æ’å…¥ç‚¹æ˜¯æ ¹
+		//³õÊ¼»¯²åÈëµãÊÇ¸ù
 		y = x;
 		if (node->key > x->key){
 			x = x->right;
@@ -65,7 +77,7 @@ void RBTree_Insert(RBRoot *root, Node	*node){
 			x = x->left;
 		}		
 	}
-	node->parent = y;
+ 	node->parent = y;
 	if (!y){
 		root->node = node;
 	}
@@ -81,59 +93,83 @@ void RBTree_Insert(RBRoot *root, Node	*node){
 	RBTree_Insert_Fixup(root, node);
 }
 
-RBTree_Insert_Fixup_Helper(Node *uncle, Node *parent, Node *graparent, Node *node, RBRoot *root){
+//²åÈëÐÞ¸´¸¨Öú
+void  RBTree_Insert_Fixup_Helper(Node *uncle, Node *parent, Node *graparent, Node *node, RBRoot *root,int f ){
+	Node *relativePos = NULL;
+	if (f){
+		relativePos = node->parent->right;
+	}
+	else{
+		relativePos = node->parent->left;
+	}
 	if (uncle&&uncle->color == RED){
 		parent->color = BLACK;
 		uncle->color = BLACK;
 		graparent->color = RED;
 		node = graparent;
+		return;
 	}
-	else{
-		if (node->parent->left == node){
-			parent->color = BLACK;
-			graparent->color = RED;
-			RBTree_Right_Rotate(root, graparent);
-		}
-		else{
-			Node *temp;
-			RBTree_Left_Rotate(root, parent);
+	/*else if (uncle&&uncle->color == BLACK){*/
+
+		if (relativePos == node){
+			
+			Node *temp = NULL;
+			f ? RBTree_Left_Rotate(root, parent) : RBTree_Right_Rotate(root, parent);
 			temp = parent;
 			parent = node;
-			node = temp;
+			node = parent;
 		}
-	}
+		
+			parent->color = BLACK;
+			graparent->color = RED;
+			f ? RBTree_Right_Rotate(root, graparent) : RBTree_Left_Rotate(root, graparent);
+
+	//}
+	return;
 }
+
+//²åÈëÐÞ¸´
 void RBTree_Insert_Fixup(RBRoot *root, Node	*node){
 	Node *parent, *graparent,*uncle;
+	int  f = 0;
 	while ((parent = node->parent) && parent->color == RED){
 		graparent = parent->parent;
+		if (!graparent){
+			return;
+		}
 		if (graparent->left == parent){
+			f = 1;
 			uncle = graparent->right;
-			RBTree_Insert_Fixup_Helper(uncle, parent, graparent, node, root);
+		
+			RBTree_Insert_Fixup_Helper(uncle, parent, graparent, node, root,f);
 		}
 		else{
 			uncle = graparent->left;
-			RBTree_Insert_Fixup_Helper(uncle, parent, graparent, node, root);
+			f = 0;
+
+			RBTree_Insert_Fixup_Helper(uncle, parent, graparent, node, root,f);
 		}
 	}
 	root->node->color = BLACK;
+	return;
 }
 
+//É¾³ý½Úµã
 void RBTree_Delete(RBRoot *root, Node *node){
 	Node *child, *parent;
 	int color;
-	//åˆ é™¤èŠ‚ç‚¹æœ‰2ä¸ªå­©å­
+	//É¾³ý½ÚµãÓÐ2¸öº¢×Ó
 	if (node->left&&node->right){
-		//åˆå§‹åŽç»§èŠ‚ç‚¹
+		//³õÊ¼ºó¼Ì½Úµã
 		Node *replace = node;
 		replace = node->right;
-		//å¯»æ‰¾åŽç»§èŠ‚ç‚¹
+		//Ñ°ÕÒºó¼Ì½Úµã
 		while (replace->left){
 			replace = replace->left;
 		}
-		//åˆ¤æ–­åˆ é™¤èŠ‚ç‚¹æ˜¯å¦ä¸ºæ ¹
+		//ÅÐ¶ÏÉ¾³ý½ÚµãÊÇ·ñÎª¸ù
 		if (node->parent){
-			//åŽç»§èŠ‚ç‚¹èµ‹ç»™åˆ é™¤èŠ‚ç‚¹
+			//ºó¼Ì½Úµã¸³¸øÉ¾³ý½Úµã
 			if (node->parent->left == node){
 				node->parent->left = replace;
 			}
@@ -142,13 +178,13 @@ void RBTree_Delete(RBRoot *root, Node *node){
 			}
 		}
 		else{
-			root->node = node;
+			root->node = replace;
 		}
-		//ä¿å­˜åŽç»§èŠ‚ç‚¹çš„ç›¸å…³ä¿¡æ¯
+		//±£´æºó¼Ì½ÚµãµÄÏà¹ØÐÅÏ¢
 		child = replace->right;
 		parent = replace->parent;
 		color = replace->color;
-
+		//²»´æÔÚÓÒ×ÓÊ÷,ºó¼ÌµÄ¸¸Ç×²Å»áµÈÓÚµ±Ç°½Úµã
 		if (parent == node){
 			parent = replace;
 		}
@@ -170,17 +206,18 @@ void RBTree_Delete(RBRoot *root, Node *node){
 			RBTree_Delete_Fixup(root, child, parent);
 		}
 		free(node);
+		return;
 	}
 
 
-	//åˆ é™¤èŠ‚ç‚¹æœ‰ä¸€ä¸ªå­©å­
+	//É¾³ý½ÚµãÓÐÒ»¸öº¢×Ó
 	if (node->left){
 		child = node->left;
 	}
 	else{
 		child = node->left;
 	}
-	//ä¿å­˜åˆ é™¤èŠ‚ç‚¹ä¿¡æ¯
+	//±£´æÉ¾³ý½ÚµãÐÅÏ¢
 	color = node->color;
 	parent = node->parent;
 	if (child){
@@ -203,28 +240,39 @@ void RBTree_Delete(RBRoot *root, Node *node){
 	free(node);
 }
 
+//É¾³ýÐÞ¸´
 void RBTree_Delete_Fixup(RBRoot *root, Node	*node,Node * parent){
 	
 	int f;
+	int res = 0;
 	while (node->color == BLACK && node != root->node){
 		if (parent->left == node){
 			f = 1;
-			RBTree_Delete_Fixup_Helper(root, node, parent, f);
+			res = RBTree_Delete_Fixup_Helper(root, node, parent, f);
+			if (res == 2){
+				break;
+			}
 		}
 		else{
 			f = 0;
-			RBTree_Delete_Fixup_Helper(root, node, parent, f);
+			res = RBTree_Delete_Fixup_Helper(root, node, parent, f);
+			if (res == 2){
+				break;
+			}
 		}
 	}
 }
 
-void RBTree_Delete_Fixup_Helper(RBRoot *root, Node	*node, Node * parent,int f){
+//É¾³ýÐÞ¸´¸¨Öú
+int RBTree_Delete_Fixup_Helper(RBRoot *root, Node	*node, Node * parent,int f){
 	Node *brother = NULL;
+	Node *temp = NULL;
+	Node *temp01 = NULL;
 	brother = f ? parent->right : parent->left;
 	if (brother->color == RED){
 		brother->color = BLACK;
 		parent->color = RED;
-		RBTree_Left_Rotate(root, parent);
+		f?RBTree_Left_Rotate(root, parent) : RBTree_Right_Rotate(root, parent);
 		brother = f ? parent->right : parent->left;
 	}
 	else{
@@ -234,31 +282,36 @@ void RBTree_Delete_Fixup_Helper(RBRoot *root, Node	*node, Node * parent,int f){
 			parent = node->parent;
 		}
 		else{
-			if (brother->right->color == BLACK){
-				brother->left->color = BLACK;
+			temp = f ? brother->right : brother->left;
+			temp01 = f ? brother->left : brother->right;
+			if (temp->color == BLACK){
+				temp01->color = BLACK;
 				brother->color = RED;
-				RBTree_Right_Rotate(root, brother);
+				f ? RBTree_Right_Rotate(root, brother) : RBTree_Left_Rotate(root, brother);
 				brother = f ? parent->right : parent->left;
 			}
 			else{
 				brother->color = parent->color;
 				parent->color = BLACK;
-				brother->right->color = BLACK;
-				RBTree_Right_Rotate(root, parent);
+				temp->color = BLACK;
+				f ? RBTree_Left_Rotate(root, parent) : RBTree_Right_Rotate(root, brother);
 				node = root->node;
+				f = 2;
+				return f;
 			}
 		}
 	}
+	return 0;
 }
 
-//åˆ›å»ºæ ¹èŠ‚ç‚¹
+//´´½¨¸ù½Úµã
 RBRoot *RBTree_Create(){
 	RBRoot *root = (RBRoot *)malloc(sizeof(RBRoot));
 	root->node = NULL;
 	return root;
 }
 
-//å…ˆåºéåŽ†
+//ÏÈÐò±éÀú
 static void preorder(RBTree tree)
 {
 	if (tree != NULL)
@@ -275,7 +328,7 @@ void preorder_rbtree(RBRoot *root)
 }
 
 /*
-* ä¸­åºéåŽ†"çº¢é»‘æ ‘"
+* ÖÐÐò±éÀú"ºìºÚÊ÷"
 */
 static void inorder(RBTree tree)
 {
@@ -294,7 +347,7 @@ void inorder_rbtree(RBRoot *root)
 }
 
 /*
-* åŽåºéåŽ†"çº¢é»‘æ ‘"
+* ºóÐò±éÀú"ºìºÚÊ÷"
 */
 static void postorder(RBTree tree)
 {
@@ -312,24 +365,27 @@ void postorder_rbtree(RBRoot *root)
 		postorder(root->node);
 }
 
+//ÅÐ¶ÏkeyÖµ½ÚµãÊÇ·ñ´æÔÚ
 Node *IsExisting(RBRoot *root, Type key){
-	if (!root){
+	Node *node = root->node;
+	if (!node){
 		return NULL;
 	}
-	while (root->node){
-		if (key > root->node->key){
-			root->node = root->node->right;
+	while (node){
+		if (key > node->key){
+			node = node->right;
 		}
-		else if (key < root->node->key){
-			root->node = root->node->left;
+		else if (key < node->key){
+			node = node->left;
 		}
 		else{
-			return root->node;
+			return node;
 		}
 	}
 	return NULL;
 }
 
+//´´½¨Ò»¸ö½Úµã
 Node *RBTree_CreateNode(int key){
 	Node *node = (Node *)malloc(sizeof(Node));
 	if (!node) return NULL;
@@ -341,6 +397,7 @@ Node *RBTree_CreateNode(int key){
 	return node;
 }
 
+//²åÈë°ü¹ü
 int RBTree_Insert_Wrap(RBRoot *root, Type key){
 	Node *node = NULL;
 	if (!root){
@@ -357,6 +414,7 @@ int RBTree_Insert_Wrap(RBRoot *root, Type key){
 	return 0;
 }
 
+//É¾³ý°ü¹ü
 void RBTree_Delete_Wrap(RBRoot *root, Type key){
 	Node *node = NULL;
 	if (!root){
@@ -366,4 +424,45 @@ void RBTree_Delete_Wrap(RBRoot *root, Type key){
 		return;
 	}
 	RBTree_Delete(root, node);
+	return;
 }
+
+//´òÓ¡¹ØÏµ
+void RBTree_Print_Relationship(Node * node){
+
+	if (!node){
+		return;
+	}
+	if (node->left){
+		printf("the left child of %d node of RBTree(%c) is %d\n", node->left->parent->key, node->left->color ? 'B' : 'R', node->left->key);
+	}
+	if (node->right){
+		printf("the right child of %d node of RBTree(%c) is %d\n", node->right->parent->key, node->right->color ? 'B' : 'R', node->right->key);
+	}
+	RBTree_Print_Relationship(node->left);
+	RBTree_Print_Relationship(node->right);
+
+	return;
+}
+
+//Ïú»ÙÊ÷
+void RBTree_Destroy(RBRoot *root){
+	Node *node = root->node;
+	if (!node){
+		return;
+	}
+	while (node){
+		if (node->left){
+			node = node->left;
+		}
+		else if (node->right){
+			node = node->right;
+		}
+		else{
+			free(node);
+		}
+	}
+}
+
+
+
