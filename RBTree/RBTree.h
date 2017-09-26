@@ -57,7 +57,7 @@ void RBTree_Insert(RBRoot *root, Node	*node);
 void RBTree_Insert_Fixup(RBRoot *root, Node	*node);
 
 //ÐÞ¸´²åÈë¸¨Öú
- void RBTree_Insert_Fixup_Helper(Node *uncle, Node *parent, Node *graparent, Node *node, RBRoot *root,int f);
+void RBTree_Insert_Fixup_Helper(Node *uncle, Node *parent, Node *graparent, Node *node, RBRoot *root, int f, int *t);
 
  //É¾³ý°ü¹ü
  void RBTree_Delete_Wrap(RBRoot *root, Type key);

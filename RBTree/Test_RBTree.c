@@ -19,9 +19,9 @@ int main(){
 	printf("\nthe root of the RBTree(%c) is %d\n", root->node->color ?  'B':'R',root->node->key);
 	RBTree_Print_Relationship(root->node);
 
-	RBTree_Delete_Wrap(root, 30);
-	RBTree_Delete_Wrap(root, 60);
-	inorder_rbtree(root);
+	//RBTree_Delete_Wrap(root, 30);
+	//RBTree_Delete_Wrap(root, 60);
+	//inorder_rbtree(root);
 	getchar();
 	return 0;
 }

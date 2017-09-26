@@ -78,9 +78,10 @@ void RBTree_Insert(RBRoot *root, Node	*node){
 		}		
 	}
  	node->parent = y;
+	//x为根，y为null，node直接给根
 	if (!y){
 		root->node = node;
-	}
+	}//否则判断当前节点相对父节点的位置
 	else{
 		if (node->key < y->key){
 			y->left = node;
@@ -89,37 +90,44 @@ void RBTree_Insert(RBRoot *root, Node	*node){
 			y->right = node;
 		}
 	}
+	//默认新增节点是红色
 	node->color = RED;
 	RBTree_Insert_Fixup(root, node);
 }
 
 //插入修复辅助
-void  RBTree_Insert_Fixup_Helper(Node *uncle, Node *parent, Node *graparent, Node *node, RBRoot *root,int f ){
+void  RBTree_Insert_Fixup_Helper(Node *uncle, Node *parent, Node *graparent, Node *node, RBRoot *root,int f ,int *t){
 	Node *relativePos = NULL;
+	//叔叔节点的位置，取决于当前的相对父节点的位置
 	if (f){
 		relativePos = node->parent->right;
 	}
 	else{
+		
 		relativePos = node->parent->left;
-	}
+	}//叔叔节点存在且是红色
 	if (uncle&&uncle->color == RED){
 		parent->color = BLACK;
 		uncle->color = BLACK;
 		graparent->color = RED;
 		node = graparent;
 		return;
-	}
+	}//反面是，叔叔节点不存在 或者 叔叔节点是黑色，因为不存在也是一种特殊的黑色
 	/*else if (uncle&&uncle->color == BLACK){*/
 
 		if (relativePos == node){
-			
-			Node *temp = NULL;
+			Node temp;
+			*t = parent;
+			//无论是发生左旋还是右旋，parent和node节点位置会发生交换（这里说的是逻辑关系），但parent和node节点存储还是原来的关系，下面进行更新。
 			f ? RBTree_Left_Rotate(root, parent) : RBTree_Right_Rotate(root, parent);
-			temp = parent;
+			//交换地址，达不到节点交换的效果，只有把地址里面的值（可以是结构）互相交换，才可以。
+			/*temp = *parent;
+			*parent = *node;
+			*node = temp;*/
 			parent = node;
-			node = parent;
 		}
 		
+		//当匹配了上面的if,下一次循环一定是执行这三行代码，这里省去else，不用等到下次循环，直接做
 			parent->color = BLACK;
 			graparent->color = RED;
 			f ? RBTree_Right_Rotate(root, graparent) : RBTree_Left_Rotate(root, graparent);
@@ -130,9 +138,11 @@ void  RBTree_Insert_Fixup_Helper(Node *uncle, Node *parent, Node *graparent, Nod
 
 //插入修复
 void RBTree_Insert_Fixup(RBRoot *root, Node	*node){
-	Node *parent, *graparent,*uncle;
+	Node *parent = NULL, *graparent = NULL,*uncle = NULL;
 	int  f = 0;
-	while ((parent = node->parent) && parent->color == RED){
+	int  f1 = 0;
+	int *temp = &f1;
+	while ((parent = node->parent)&&parent->color == RED){
 		graparent = parent->parent;
 		if (!graparent){
 			return;
@@ -140,14 +150,21 @@ void RBTree_Insert_Fixup(RBRoot *root, Node	*node){
 		if (graparent->left == parent){
 			f = 1;
 			uncle = graparent->right;
-		
-			RBTree_Insert_Fixup_Helper(uncle, parent, graparent, node, root,f);
+			//叔叔节点为空，也是黑色
+			RBTree_Insert_Fixup_Helper(uncle, parent, graparent, node, root,f,temp);
+			if (*temp){
+				node = *temp;
+				*temp = 0;
+			}
 		}
 		else{
 			uncle = graparent->left;
 			f = 0;
-
-			RBTree_Insert_Fixup_Helper(uncle, parent, graparent, node, root,f);
+			RBTree_Insert_Fixup_Helper(uncle, parent, graparent, node, root,f,temp);
+			if (*temp){
+				node = *temp;
+				*temp = 0;
+			}
 		}
 	}
 	root->node->color = BLACK;
