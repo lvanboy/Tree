@@ -32,7 +32,7 @@ HuffmanNode *Create_HuffmanNode(Type key, HuffmanNode *left, HuffmanNode *right,
 }
 
 Huffman *Create_Huffman(Type a[], int size){
-	//ç”Ÿæˆæœ€å°å †
+	//Éú³É×îĞ¡¶Ñ
 	Create_minheap(a, size);
 	printf("the min heap is :");
 	print_minheap();
@@ -40,7 +40,7 @@ Huffman *Create_Huffman(Type a[], int size){
 	HuffmanNode *right = NULL;
 	HuffmanNode *parent = NULL;
 
-	//ä¾æ¬¡æ‹¿æœ€å°å€¼å’Œæ¬¡å°å€¼
+	//ÒÀ´ÎÄÃ×îĞ¡ÖµºÍ´ÎĞ¡Öµ
 	for (int i = 0; i < size-1; i++){
 		left = dump_from_minheap();
 		right = dump_from_minheap();
@@ -59,7 +59,7 @@ Huffman *Create_Huffman(Type a[], int size){
 		right->parent = parent;
 
 		if (insert_minheap(parent) == -1){
-			printf("æ’å…¥å¤±è´¥ï¼");
+			printf("²åÈëÊ§°Ü£¡");
 			Destroy_minheap(parent);
 			return NULL;
 		}
